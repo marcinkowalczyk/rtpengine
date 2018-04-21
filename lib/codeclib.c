@@ -1217,11 +1217,31 @@ static void opus_init(struct rtp_payload_type *pt) {
 }
 
 static void opus_set_options(encoder_t *enc) {
-	int ret;
+	int ret_frame_duration;
+	int ret_vbr;
+	int ret_packet_loss;
+	int ret_application;
+	int ret_cutoff;
+	int ret_apply_phase_inv;
 	if (enc->ptime)
-		if ((ret = av_opt_set_int(enc->u.avc.avcctx, "frame_duration", enc->ptime, 0)))
-			ilog(LOG_WARN, "Failed to set Opus frame_duration option (error code %i)", ret);
+		if ((ret_frame_duration = av_opt_set_int(enc->u.avc.avcctx, "frame_duration", enc->ptime, 0)))
+			ilog(LOG_WARN, "Failed to set Opus frame_duration option (error code %i)", ret_frame_duration);
 	// XXX additional opus options
+    if ((ret_vbr = av_opt_set_int(enc->u.avc.avcctx, "vbr", "on", 0)))
+        ilog(LOG_WARN, "Failed to set Opus vbr option (error code %i)", ret_vbr);
+
+    if ((ret_packet_loss = av_opt_set_int(enc->u.avc.avcctx, "packet_loss", 15, 0)))
+        ilog(LOG_WARN, "Failed to set Opus packet_loss option (error code %i)", ret_packet_loss);
+
+    if ((ret_application = av_opt_set_int(enc->u.avc.avcctx, "application", "voip", 0)))
+        ilog(LOG_WARN, "Failed to set Opus application option (error code %i)", ret_application);
+
+    if ((ret_cutoff = av_opt_set_int(enc->u.avc.avcctx, "cutoff", 4000, 0)))
+        ilog(LOG_WARN, "Failed to set Opus cutoff option (error code %i)", ret_cutoff);
+
+    if ((ret_apply_phase_inv = av_opt_set_int(enc->u.avc.avcctx, "apply_phase_inv", 0, 0)))
+        ilog(LOG_WARN, "Failed to set Opus cutoff option (error code %i)", ret_apply_phase_inv);
+
 }
 
 
